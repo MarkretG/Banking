@@ -11,6 +11,7 @@ import java.util.Map;
 public class PersistenceDAOImpl implements PersistenceDAO {
     private final int errorCodeForSqlInsertQuery = 402;
     private final int errorCodeForSqlSelectQuery = 403;
+    private final int errorCodeForSqlUpdateQuery=404;
 
     @Override
     public ArrayList<Long> addCustomers(ArrayList<Customer> customers) throws PersistenceException {
@@ -187,7 +188,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
         try( Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);
         } catch (SQLException e) {
-            throw new PersistenceException("Exception occur in update query for update account", errorCodeForSqlInsertQuery);
+            throw new PersistenceException("Exception occur in update query for update account", errorCodeForSqlUpdateQuery);
         }
 
     }
@@ -199,7 +200,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
         try( Statement statement = connection.createStatement()) {
             statement.executeUpdate(query);
         } catch (SQLException e) {
-            throw new PersistenceException("Exception occur in update query for update account", errorCodeForSqlInsertQuery);
+            throw new PersistenceException("Exception occur in update query for update account", errorCodeForSqlUpdateQuery);
         }
 
     }
