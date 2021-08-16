@@ -194,7 +194,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     }
 
     @Override
-    public void updateAccount(long customer_id,long account_id) throws PersistenceException{
+    public void deleteAccount(long customer_id,long account_id) throws PersistenceException{
         Connection connection = DBUtil.getConnection();
         String query = "update account_info set status='inactivate' where customer_id=customer_id and account_id=account_id";
         try( Statement statement = connection.createStatement()) {
@@ -205,8 +205,4 @@ public class PersistenceDAOImpl implements PersistenceDAO {
 
     }
 
-    @Override
-    public void deleteAccount() {
-
-    }
 }

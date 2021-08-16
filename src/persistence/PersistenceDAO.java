@@ -26,9 +26,7 @@ public interface PersistenceDAO{
 
     void updateAccount(long account_id ,double balance) throws PersistenceException;
 
-    void updateAccount(long customer_id,long account_id) throws  PersistenceException;
-
-    void deleteAccount();
+    void deleteAccount(long customer_id,long account_id) throws  PersistenceException;
 
 
 }

@@ -1,10 +1,8 @@
 package logicalLayer;
-
 import bankingManagement.Account;
 import bankingManagement.Customer;
 import inMemoryStorageHandling.AccountNotFoundException;
 import persistence.*;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -104,7 +102,7 @@ public class LogicalHandler {
     }
 
     public void deleteAccount(long customerId,long accountId) throws LogicalException, PersistenceException, AccountNotFoundException {
-       Controller.getPersistenceDAOHandler().updateAccount(customerId,accountId);
+       Controller.getPersistenceDAOHandler().deleteAccount(customerId,accountId);
        HashMap<Long,Account> accountHashMap=Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
        for (Map.Entry<Long,Account> entry: accountHashMap.entrySet())
        {

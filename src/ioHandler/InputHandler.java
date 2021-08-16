@@ -8,6 +8,7 @@ import logicalLayer.LogicalHandler;
 
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 public class InputHandler {
 
@@ -35,8 +36,10 @@ public class InputHandler {
             System.out.println("enter name");
             scanner.nextLine();
             String name = scanner.nextLine();
+            validateName(name);
             System.out.println("enter age");
-            int age = scanner.nextInt();
+            int age=scanner.nextInt();
+            validateAge(age);
             System.out.println("enter phone Number");
             long phone = scanner.nextLong();
             Customer customer=LogicalHandler.getInstance().getCustomerObject(name,age,phone);
@@ -83,6 +86,25 @@ public class InputHandler {
     }
     public void closeScanner() {
         scanner.close();
+    }
+    public int validateAge(int age) {
+        while ((age > 120) || (age < 10)) {//error message
+            System.out.println("ERROR Please enter a valid age");
+            System.out.println("What is your age?\n");
+            age = scanner.nextInt();
+        }//end if
+        return age;
+    }
+    public String validateName(String name)
+    {
+        while(!Pattern.matches("^[a-zA-Z]\\w{2,50}",name))
+        {
+            System.out.println("input mismatch");
+            System.out.println("enter your name");
+            scanner.nextLine();
+            name=scanner.nextLine();
+        }
+        return name;
     }
 
 
