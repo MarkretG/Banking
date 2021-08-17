@@ -14,11 +14,9 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     @Override
     public ArrayList<Long> addCustomers(ArrayList<Customer> customers) throws PersistenceException {
         validateListOfCustomers(customers);
-        ArrayList<Long> customer_ids = new ArrayList<>();
         Connection connection = DBUtil.getConnection();
         String query = "insert into customer_info(name,age,phone) values(?,?,?)";
         try (PreparedStatement preparedStatement = connection.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS)) {
-            //preparedStatement.setLong(1, customer.getCustomer_id());
             for (Customer customer : customers) {
                 preparedStatement.setString(1, customer.getName());
                 preparedStatement.setInt(2, customer.getAge());
@@ -27,22 +25,16 @@ public class PersistenceDAOImpl implements PersistenceDAO {
             }
             handleBatchUpdateException(preparedStatement);
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            while (resultSet.next()) {
-                customer_ids.add(resultSet.getLong(1));
-            }
+            return handleResultSet(resultSet);
         } catch (SQLException e) {
             e.printStackTrace();
             throw new PersistenceException("Exception occur in insert query in customer table", errorCodeForSqlInsertQuery);
         }
-        return customer_ids;
     }
 
     @Override
     public ArrayList<Customer> getCustomers(ArrayList<Long> customer_ids) throws PersistenceException {
-        if (customer_ids==null||customer_ids.isEmpty())
-        {
-            throw  new PersistenceException("select  customers list is empty or null",errorCodeEmptyList);
-        }
+        validateList(customer_ids);
         ArrayList<Customer> customers = new ArrayList<>();
         Connection connection = DBUtil.getConnection();
         String query = "select customer_id,name from customer_info where customer_id in (?)";
@@ -101,7 +93,10 @@ public class PersistenceDAOImpl implements PersistenceDAO {
 
     @Override
     public ArrayList<Long> addAccounts(HashMap<Long, Account> accounts) throws PersistenceException {
-
+        if (accounts==null||accounts.isEmpty())
+        {
+            throw new PersistenceException("add customers list is empty or null",errorCodeEmptyList);
+        }
         ArrayList<Long> account_ids = new ArrayList<>();
         Connection connection = DBUtil.getConnection();
         String query = "insert into account_info(customer_id,balance) values(?,?)";
@@ -115,7 +110,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
             }
 
             ResultSet resultSet = preparedStatement.getGeneratedKeys();
-            if (resultSet.next()) {
+            while(resultSet.next()) {
                 account_ids.add(resultSet.getLong(1));
             }
             System.out.println("accounts added successfully");
@@ -127,10 +122,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
 
     @Override
     public ArrayList<Account> getAccounts(ArrayList<Long> account_ids) throws PersistenceException {
-        if (account_ids.isEmpty())
-        {
-            throw  new PersistenceException("select accounts list is empty",errorCodeEmptyList);
-        }
+        validateList(account_ids);
         ArrayList<Account> accounts = new ArrayList<>();
         Connection connection = DBUtil.getConnection();
         String query = "select customer_id,account_id,balance  from  account_info where account_id in (?)";
@@ -251,17 +243,25 @@ public class PersistenceDAOImpl implements PersistenceDAO {
             throw new PersistenceException("add customers list is empty or null",errorCodeEmptyList);
         }
     }
-    public void validateListOfAccounts(ArrayList<Account> accounts) throws PersistenceException {
-        if (accounts==null||accounts.isEmpty())
+    public void validateList(ArrayList<Long> customerIdList) throws PersistenceException {
+        if (customerIdList==null||customerIdList.isEmpty())
         {
             throw  new PersistenceException("add accounts map is empty or null",errorCodeEmptyList);
         }
     }
 
-    public void handleResultSet(ResultSet resultSet)
-    {
-
+    public ArrayList<Long> handleResultSet(ResultSet resultSet) throws PersistenceException {
+        ArrayList<Long> customerIdList=new ArrayList<>();
+        try {
+            while (resultSet.next()) {
+                customerIdList.add(resultSet.getLong(1));
+            }
+        }
+     catch (SQLException e) {
+        e.printStackTrace();
+        throw new PersistenceException("Exception occur in insert query in customer table", errorCodeForSqlInsertQuery);
     }
-
+        return customerIdList;
+    }
 
 }
