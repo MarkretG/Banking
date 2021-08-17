@@ -36,13 +36,13 @@ public class InputHandler {
             System.out.println("enter name");
             scanner.nextLine();
             String name = scanner.nextLine();
-            validateName(name);
+            String customer_name=validateName(name);
             System.out.println("enter age");
             int age=scanner.nextInt();
-            validateAge(age);
+            int customer_age=validateAge(age);
             System.out.println("enter phone Number");
             long phone = scanner.nextLong();
-            Customer customer=LogicalHandler.getInstance().getCustomerObject(name,age,phone);
+            Customer customer=LogicalHandler.getInstance().getCustomerObject(customer_name,customer_age,phone);
             customers.add(customer);
         }
         return customers;
@@ -81,6 +81,7 @@ public class InputHandler {
     }
     public Double getBalance()
     {
+        System.out.println("enter balance");
         balance=scanner.nextDouble();
         return balance;
     }

@@ -2,12 +2,13 @@ package logicalLayer;
 import bankingManagement.Account;
 import bankingManagement.Customer;
 import inMemoryStorageHandling.AccountNotFoundException;
+import inMemoryStorageHandling.InMemoryStorageDAO;
 import persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LogicalHandler {
+public class LogicalHandler{
     private static LogicalHandler logicalHandler = null;
 
     public static LogicalHandler getInstance() {
@@ -20,18 +21,18 @@ public class LogicalHandler {
         //initially store customer table and account table in hashmap
         try {
             //get all customers and store in customer HashMap
-            ArrayList<Customer> customers = Controller.getPersistenceDAOHandler().selectAllCustomers();
+            ArrayList<Customer> customers = Controller.getPersistenceDAOHandler().getAllCustomers();
             Controller.getInMemoryStorageDAOHandler().storeCustomersInCustomerHashMap(customers);
 
             //get all Accounts and store in Hashmap account HashMap
-            ArrayList<Account> accounts = Controller.getPersistenceDAOHandler().selectAllAccounts();
+            ArrayList<Account> accounts = Controller.getPersistenceDAOHandler().getAllAccounts();
             Controller.getInMemoryStorageDAOHandler().storeAccountsInAccountHashMap(accounts);
         } catch (PersistenceException  e) {
             System.out.println("ERROR CODE:"+e.getErrorCode() + " " + e.getMessage());
         }
 
     }
-    public void handleNewCustomer(ArrayList<Customer> customers, ArrayList<Account> accounts) throws LogicalException{
+    public void handleNewCustomer(ArrayList<Customer> customers, ArrayList<Account> accounts)throws LogicalException{
         try {
             //insert customers in customer table and get generated customer ids
             ArrayList<Long> customer_ids = Controller.getPersistenceDAOHandler().addCustomers(customers);
@@ -43,13 +44,13 @@ public class LogicalHandler {
             ArrayList<Long> customer_id = Controller.getPersistenceDAOHandler().addAccounts(account);
 
             //get all inserted customers
-            ArrayList<Customer> customers1 = Controller.getPersistenceDAOHandler().selectCustomers(customer_ids);
+            ArrayList<Customer> customers1 = Controller.getPersistenceDAOHandler().getCustomers(customer_ids);
 
             //store in customer HashMap
             Controller.getInMemoryStorageDAOHandler().storeCustomersInCustomerHashMap(customers1);
 
             // get all inserted Accounts
-            ArrayList<Account> accounts1 = Controller.getPersistenceDAOHandler().selectAccounts(customer_id);
+            ArrayList<Account> accounts1 = Controller.getPersistenceDAOHandler().getAccounts(customer_id);
 
             //store in account HashMap
             Controller.getInMemoryStorageDAOHandler().storeAccountsInAccountHashMap(accounts1);
@@ -63,7 +64,7 @@ public class LogicalHandler {
             Controller.getPersistenceDAOHandler().addAccount(customer_id, balance);
 
             //get inserted account
-            Account account = Controller.getPersistenceDAOHandler().selectAccount(customer_id);
+            Account account = Controller.getPersistenceDAOHandler().getAccount(customer_id);
 
             //store in account hashMap
             Controller.getInMemoryStorageDAOHandler().storeAccountInAccountHashMap(account);
@@ -102,7 +103,7 @@ public class LogicalHandler {
     }
 
     public void deleteAccount(long customerId,long accountId) throws LogicalException, PersistenceException, AccountNotFoundException {
-       Controller.getPersistenceDAOHandler().deleteAccount(customerId,accountId);
+       Controller.getPersistenceDAOHandler().deleteAccount(accountId);
        HashMap<Long,Account> accountHashMap=Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
        for (Map.Entry<Long,Account> entry: accountHashMap.entrySet())
        {
@@ -113,7 +114,7 @@ public class LogicalHandler {
            }
        }
     }
-    public void transaction(long customer_id,long account_id,double balance) throws LogicalException, PersistenceException, AccountNotFoundException {
+    public void transactionOfWithdrawORDeposit(long customer_id,long account_id,double balance) throws LogicalException, PersistenceException, AccountNotFoundException {
        Controller.getPersistenceDAOHandler().updateAccount(account_id,balance);
         HashMap<Long,Account> accountHashMap=Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
         for (Map.Entry<Long,Account> entry: accountHashMap.entrySet())

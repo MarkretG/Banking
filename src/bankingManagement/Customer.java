@@ -6,6 +6,13 @@ public class Customer {
     private  int age;
     private long phone;
 
+    public Customer( String name, int age, long phone) {
+        this.name = name;
+        this.age = age;
+        this.phone = phone;
+    }
+    public Customer(){}
+
     @Override
     public String toString() {
         return "Customer{" +

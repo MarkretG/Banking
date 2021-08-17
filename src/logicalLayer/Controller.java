@@ -1,14 +1,11 @@
 package logicalLayer;
-
 import inMemoryStorageHandling.InMemoryStorageDAO;
 import persistence.PersistenceDAO;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
-
 public class Controller {
 
     private static final int errorCodeForFile=502;
@@ -44,7 +41,7 @@ public class Controller {
         try {
             String className = (String) getProperties().get("persistenceDAO");
                 persistenceDAO = (PersistenceDAO) Class.forName(className).newInstance();
-        } catch (NullPointerException|InstantiationException | IllegalAccessException | ClassNotFoundException  e) {
+        } catch (InstantiationException | IllegalAccessException | ClassNotFoundException  e) {
             throw new LogicalException("class name pointing to null or class not found exception occur ", errorCodeForClass);
         } catch (LogicalException e) {
             System.out.println("ERROR CODE:"+e.getErrorCode()+" "+e.getMessage());
@@ -58,16 +55,9 @@ public class Controller {
         }
         try {
             String className = (String) getProperties().get("inMemoryStorageDAO");
-            try{
-            inMemoryStorageDAO = (InMemoryStorageDAO) Class.forName(className).newInstance();}
-            catch (NullPointerException e)
-            {
-                throw new NullPointerException("class name pointing null  check your class name");
-            }
+            inMemoryStorageDAO = (InMemoryStorageDAO) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             throw new LogicalException("class not found in properties file", errorCodeForClass);
-        } catch (LogicalException e) {
-            System.out.println("ERROR CODE:"+e.getErrorCode()+" "+e.getMessage());
         }
         return inMemoryStorageDAO;
     }
