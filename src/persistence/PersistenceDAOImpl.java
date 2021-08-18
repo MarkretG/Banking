@@ -178,7 +178,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     public ArrayList<Account> getAllAccounts() throws PersistenceException {
         ArrayList<Account> accountList=new ArrayList<>();
         Connection connection = DBUtil.getConnection();
-        String query="select customer_id,account_id,balance from  account_info where status=1";
+        String query="select customer_id,account_id,balance from  account_info where active=1";
         try (Statement statement = connection.createStatement();
              ResultSet resultSet = statement.executeQuery(query)) {
             while (resultSet.next()) {

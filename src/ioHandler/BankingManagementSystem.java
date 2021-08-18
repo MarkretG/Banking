@@ -8,10 +8,11 @@ import logicalLayer.LogicalHandler;
 import persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 public class  BankingManagementSystem {
     public static void main(String[] args) throws LogicalException, PersistenceException, AccountNotFoundException {
-        LogicalHandler.INSTANCE.initialiseHashMap();
+        //LogicalHandler.INSTANCE.LogicalHandler();
         while (true)
         {
             System.out.println("1.New Customer");
@@ -37,7 +38,7 @@ public class  BankingManagementSystem {
                 case 6: deposit();break;
 
                 case 7:
-                    LogicalHandler.INSTANCE.CloseConnection();
+                    LogicalHandler.INSTANCE.closeConnection();
                     InputHandler.INSTANCE.closeScanner();
                     System.exit(0);
             }
@@ -67,21 +68,20 @@ public class  BankingManagementSystem {
     private static double validateDepositAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
         InputHandler inputHandler = InputHandler.INSTANCE;
         System.out.println("enter deposit amount");
-        double balance = inputHandler.getBalance();
+        double depositAmount = inputHandler.getBalance();
         HashMap<Long, Account> accountHashMap = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
             for (Map.Entry<Long, Account> entry : accountHashMap.entrySet()) {
                 if (entry.getKey() == account_id) {
                     System.out.println("savings amount:"+entry.getValue().getBalance());
-                    while (balance <= 0) {
+                    while (depositAmount <= 0) {
                         System.out.println("amount should be positive");
-                        balance = inputHandler.getBalance();
+                        depositAmount = inputHandler.getBalance();
                     }
-                    System.out.println("deposit amount:"+balance);
-                    balance = entry.getValue().getBalance() + balance;
+                    System.out.println("deposit amount:"+depositAmount);
                     break;
                 }
           }
-        return balance;
+        return depositAmount;
     }
 
     private static long  checkCustomerIdInAccountHashMap(long customer_id) throws LogicalException {
@@ -151,7 +151,7 @@ public class  BankingManagementSystem {
 
     private static void addNewCustomers()
     {
-        ArrayList<Customer> customers = InputHandler.INSTANCE.getCustomersInfo();
+        List<Customer> customers = InputHandler.INSTANCE.getCustomersInfo();
         ArrayList<Account> accounts = InputHandler.INSTANCE.getAccountsInfo(customers.size());
         LogicalHandler.INSTANCE.handleNewCustomer(customers, accounts);
     }

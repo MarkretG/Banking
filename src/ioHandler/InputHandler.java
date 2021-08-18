@@ -3,6 +3,7 @@ import bankingManagement.Account;
 import bankingManagement.Customer;
 import logicalLayer.LogicalHandler;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 public enum InputHandler {
     INSTANCE;
@@ -11,9 +12,9 @@ public enum InputHandler {
     long account_id;
     int choice;
     double balance;
-    public ArrayList<Customer> getCustomersInfo() {
-        ArrayList<Customer> customers=new ArrayList<>();
-        System.out.println("how many customers");
+    public List<Customer> getCustomersInfo() {
+        List<Customer> customers=new ArrayList<>();
+        System.out.println("How many customers");
         int customersCount=scanner.nextInt();
         for(int i=0;i<customersCount;i++)
         {
@@ -33,7 +34,7 @@ public enum InputHandler {
         ArrayList<Account> accounts=new ArrayList<>();
         for (int i=0;i<accountsCounts;i++) {
             System.out.println("enter balance");
-            double balance = scanner.nextDouble();
+            double balance = getBalance();
             Account account = LogicalHandler.INSTANCE.getAccountObject(balance);
             accounts.add(account);
         }
@@ -74,7 +75,6 @@ public enum InputHandler {
     }
     public Double getBalance()
     {
-        System.out.println("enter balance");
         balance=scanner.nextDouble();
         while (balance<=0)
         {
@@ -100,6 +100,7 @@ public enum InputHandler {
     private String validateName()
     {
         System.out.println("enter name");
+        scanner.nextLine();
         String name=scanner.nextLine();
         while (name==null)
         {

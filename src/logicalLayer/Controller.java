@@ -41,7 +41,7 @@ public class Controller {
             return persistenceDAO;
         }
         try {
-            String className = (String) getProperties().get("persistenceDAO");
+            String className =  getProperties().getProperty("persistenceDAO");
             nullCheck(className);
             persistenceDAO = (PersistenceDAO) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException  e) {

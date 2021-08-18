@@ -10,7 +10,7 @@ import java.util.Map;
 public enum LogicalHandler {
     INSTANCE;
 
-    public void initialiseHashMap(){
+     LogicalHandler(){
         //initially store customer table and account table in hashmap
         try {
             //get all customers and store in customer HashMap
@@ -159,7 +159,7 @@ public enum LogicalHandler {
         }
 
     }
-    public void CloseConnection() throws LogicalException {
+    public void closeConnection() throws LogicalException {
         Controller.getPersistenceDAOHandler().cleanUp();
     }
 
