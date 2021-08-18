@@ -21,11 +21,13 @@ public class DBUtil {
 
             connection = DriverManager.getConnection(url, userName, password);// create the connection now
         } catch (ClassNotFoundException e) {
-            throw new PersistenceException("Exception in get connection", errorCode);
+            e.printStackTrace();
+            throw new PersistenceException("Exception in get connection",e, errorCode);
         }
         catch (SQLException e)
         {
-            throw new PersistenceException("Exception in get connection",errorCode);
+            e.printStackTrace();
+            throw new PersistenceException("Exception in get connection",e,errorCode);
         }
 
       return connection;
