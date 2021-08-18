@@ -14,7 +14,7 @@ public interface PersistenceDAO{
     ArrayList<Customer> getAllCustomers()throws PersistenceException;
 
     //insert  account
-    void addAccount(long customer_id,double balance) throws  PersistenceException;
+    long addAccount(long customer_id,double balance) throws  PersistenceException;
     ArrayList<Long> addAccounts(HashMap<Long, Account> account)throws  PersistenceException;
 
     //select accounts by id
@@ -28,5 +28,5 @@ public interface PersistenceDAO{
 
     void deleteAccount(long account_id) throws  PersistenceException;
 
-
+    void cleanUp();
 }

@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.util.Properties;
 public class Controller {
 
-    private static final int errorCodeForFile=502;
-    private static final int errorCodeForClass=503;
+    private static final int ERROR_CODE_FILE=502;
+    private static final int ERROR_CODE_CLASS=503;
 
     private static PersistenceDAO persistenceDAO=null;
     private static InMemoryStorageDAO inMemoryStorageDAO=null;
@@ -26,9 +26,11 @@ public class Controller {
         try (FileReader reader = new FileReader(path + "controller.properties")) {
             properties.load(reader);
         } catch (FileNotFoundException e) {
-            throw new LogicalException("file not found please check your file path", errorCodeForFile);
+            e.printStackTrace();
+            throw new LogicalException("file not found please check your file path",e, ERROR_CODE_FILE);
         } catch (IOException i) {
-            throw new LogicalException("you are try to read file that does not exist", errorCodeForFile);
+            i.printStackTrace();
+            throw new LogicalException("you are try to read file that does not exist",i, ERROR_CODE_FILE);
         }
         return properties;
     }
@@ -40,11 +42,11 @@ public class Controller {
         }
         try {
             String className = (String) getProperties().get("persistenceDAO");
-                persistenceDAO = (PersistenceDAO) Class.forName(className).newInstance();
+            nullCheck(className);
+            persistenceDAO = (PersistenceDAO) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException  e) {
-            throw new LogicalException("class name pointing to null or class not found exception occur ", errorCodeForClass);
-        } catch (LogicalException e) {
-            System.out.println("ERROR CODE:"+e.getErrorCode()+" "+e.getMessage());
+            e.printStackTrace();
+            throw new LogicalException("Exception occur in get persistenceDAO ",e, ERROR_CODE_CLASS);
         }
         return persistenceDAO;
     }
@@ -55,10 +57,19 @@ public class Controller {
         }
         try {
             String className = (String) getProperties().get("inMemoryStorageDAO");
+            nullCheck(className);
             inMemoryStorageDAO = (InMemoryStorageDAO) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            throw new LogicalException("class not found in properties file", errorCodeForClass);
+            e.printStackTrace();
+            throw new LogicalException("Exception occur in get inMemoryStorageDAO",e, ERROR_CODE_CLASS);
         }
         return inMemoryStorageDAO;
+    }
+
+     private static void nullCheck(String className) throws LogicalException {
+        if(className==null)
+        {
+            throw new LogicalException("class name pointing to null",ERROR_CODE_CLASS);
+        }
     }
 }

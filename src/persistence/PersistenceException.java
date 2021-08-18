@@ -1,19 +1,20 @@
 package persistence;
 public class PersistenceException extends Exception{
     int errorCode;
-    String message;
     public PersistenceException(String message,int errorCode)
     {
+        super(message);
         this.errorCode=errorCode;
-        this.message=message;
+
+    }
+    public PersistenceException(String message,Throwable cause,int errorCode)
+    {
+        super(message, cause);
+        this.errorCode=errorCode;
     }
 
     public int getErrorCode() {
         return errorCode;
     }
 
-    @Override
-    public String getMessage() {
-        return message;
-    }
 }

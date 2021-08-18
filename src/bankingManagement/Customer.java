@@ -1,17 +1,10 @@
 package bankingManagement;
-
 public class Customer {
     private long customer_id;
     private  String name;
     private  int age;
     private long phone;
 
-    public Customer( String name, int age, long phone) {
-        this.name = name;
-        this.age = age;
-        this.phone = phone;
-    }
-    public Customer(){}
 
     @Override
     public String toString() {

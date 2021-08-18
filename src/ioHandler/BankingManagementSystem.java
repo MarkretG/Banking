@@ -5,15 +5,13 @@ import inMemoryStorageHandling.AccountNotFoundException;
 import logicalLayer.Controller;
 import logicalLayer.LogicalException;
 import logicalLayer.LogicalHandler;
-import persistence.DBUtil;
 import persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 public class  BankingManagementSystem {
     public static void main(String[] args) throws LogicalException, PersistenceException, AccountNotFoundException {
-        LogicalHandler.getInstance().initialiseHashMap();
-        InputHandler inputHandler=InputHandler.getInstance();
+        LogicalHandler.INSTANCE.initialiseHashMap();
         while (true)
         {
             System.out.println("1.New Customer");
@@ -22,106 +20,52 @@ public class  BankingManagementSystem {
             System.out.println("4.delete account");
             System.out.println("5.withdraw");
             System.out.println("6.deposit");
-            //System.out.println("7.transfer money");
-            System.out.println("8.exit");
-            int choice=inputHandler.getChoice();
+            System.out.println("7.exit");
+            int choice=InputHandler.INSTANCE.getChoice();
             switch (choice)
             {
-                case 1: {
-                    ArrayList<Customer> customers = inputHandler.getCustomerInfo();
-                    ArrayList<Account> accounts = inputHandler.getAccountInfo(customers.size());
-                    LogicalHandler.getInstance().handleNewCustomer(customers, accounts);
-                    }
-                break;
-                case 2: {
-                    long customer_id = inputHandler.getCustomerId();
-                    System.out.println("enter balance");
-                    double balance = inputHandler.getBalance();
-                    LogicalHandler.getInstance().addNewAccountForExistingCustomer(customer_id,balance);
-                   }
-                break;
-                case 3: {
-                    long customer_id = inputHandler.getCustomerId();
-                    try {
-                        HashMap<Long, Account> accountInfo = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
-                        System.out.println(accountInfo);
-                    } catch (AccountNotFoundException e) {
-                        System.out.println("Customer_id:" + e.getCustomer_id() + "this customer_id not available in account table");
-                    }
-                }
-                    break;
-                case 4: {
-                    long customer_id =validateCustomerId(inputHandler.getCustomerId());
-                    long account_id = validateAccountId(customer_id, inputHandler.getAccountId());
+                case 1: addNewCustomers();break;
 
-                    LogicalHandler.getInstance().deleteAccount(customer_id, account_id);
+                case 2: addNewAccount(); break;
 
-                }
-                break;
-                case 5: {
-                    long customer_id = validateCustomerId(inputHandler.getCustomerId());
+                case 3: getAccountsInfo();break;
 
-                    long account_id = validateAccountId(customer_id,inputHandler.getAccountId());
+                case 4: deleteAccount();break;
 
-                    double amount = validateWithdrawAmount(customer_id, account_id);
+                case 5: withDraw();break;
 
-                    System.out.println("available amount:"+amount);
-
-                    LogicalHandler.getInstance().transactionOfWithdrawORDeposit(customer_id, account_id, amount);
-                    }
-                    break;
-                case 6:
-                {
-                    long customer_id= validateCustomerId(inputHandler.getCustomerId());
-
-                    long account_id = validateAccountId(customer_id,inputHandler.getAccountId());
-
-                    double amount=validateDepositAmount(customer_id,account_id);
-
-                    System.out.println("available amount:"+amount);
-
-                    LogicalHandler.getInstance().transactionOfWithdrawORDeposit(customer_id,account_id,amount);
-                }
-                break;
-                /*case 7:
-                    long customer_id= validateCustomerId(inputHandler.getCustomerId());
-
-                    long account_id = validateAccountId(customer_id,inputHandler.getAccountId());
-
-                 */
+                case 6: deposit();break;
 
                 case 7:
-                    DBUtil.closeConnection();
-                    inputHandler.closeScanner();
+                    LogicalHandler.INSTANCE.CloseConnection();
+                    InputHandler.INSTANCE.closeScanner();
                     System.exit(0);
             }
 
         }
-
-
     }
-    public static double validateWithdrawAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
-        InputHandler inputHandler=InputHandler.getInstance();
+
+    private static double validateWithdrawAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
         System.out.println("enter withdraw amount");
-        double withdrawalAmount= inputHandler.getBalance();
+        double withdrawalAmount= InputHandler.INSTANCE.getBalance();
         HashMap<Long,Account> accountHashMap= Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
             for (Map.Entry<Long, Account> entry : accountHashMap.entrySet()) {
                 if (entry.getKey() == account_id) {
                     System.out.println("savings amount:"+entry.getValue().getBalance());
                     while ((entry.getValue().getBalance() < withdrawalAmount || withdrawalAmount <= 0)) {
                         System.out.println("withdraw amount does not exceed savings amount or withdraw amount should be positive");
-                        withdrawalAmount = inputHandler.getBalance();
+                        withdrawalAmount = InputHandler.INSTANCE.getBalance();
                     }
                     System.out.println("with draw amount:"+withdrawalAmount);
-                    withdrawalAmount = entry.getValue().getBalance() - withdrawalAmount;
                     break;
                 }
             }
             return withdrawalAmount;
       }
 
-    public static double validateDepositAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
-        InputHandler inputHandler = InputHandler.getInstance();
+
+    private static double validateDepositAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
+        InputHandler inputHandler = InputHandler.INSTANCE;
         System.out.println("enter deposit amount");
         double balance = inputHandler.getBalance();
         HashMap<Long, Account> accountHashMap = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
@@ -139,21 +83,20 @@ public class  BankingManagementSystem {
           }
         return balance;
     }
-    public static long  validateCustomerId(long customer_id) throws LogicalException {
+
+    private static long  checkCustomerIdInAccountHashMap(long customer_id) throws LogicalException {
         HashMap<Long,HashMap<Long,Account>> account=Controller.getInMemoryStorageDAOHandler().getAccountHashMap();
         if (account.containsKey(customer_id)) {
             return customer_id;
         }
-        else
-        {
             while (!account.containsKey(customer_id)) {
                 System.out.println("enter customer_id is not available");
-                customer_id = InputHandler.getInstance().getCustomerId();
+                customer_id = InputHandler.INSTANCE.getCustomerId();
             }
-        }
         return customer_id;
     }
-    public static long  validateAccountId(long customer_id,long account_id) throws LogicalException, AccountNotFoundException {
+
+    public static long checkAccountIdIsMatchGivenCustomerId(long customer_id,long account_id) throws LogicalException, AccountNotFoundException {
         HashMap<Long,Account> accountHashMap=Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
         if (accountHashMap.containsKey(account_id)) {
             return account_id;
@@ -161,11 +104,84 @@ public class  BankingManagementSystem {
 
         while (!accountHashMap.containsKey(account_id)) {
             System.out.println("enter account id  is mismatch for given customer_id");
-            account_id = InputHandler.getInstance().getAccountId();
+            account_id = InputHandler.INSTANCE.getAccountId();
         }
-
         return account_id;
     }
+
+    private   static  double getSavingsAmount(long customer_id,long account_id) throws LogicalException, AccountNotFoundException {
+        HashMap<Long, Account> accountHashMap = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
+        for (Map.Entry<Long, Account> entry : accountHashMap.entrySet()) {
+            if (entry.getKey() == account_id) {
+                return entry.getValue().getBalance();
+            }
+        }
+        return 0;
+    }
+
+    private static void withDraw() throws LogicalException, AccountNotFoundException, PersistenceException {
+        long customer_id = checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
+
+        long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id,InputHandler.INSTANCE.getAccountId());
+
+        double withdrawalAmount = validateWithdrawAmount(customer_id, account_id);
+
+        double savingsAmount=getSavingsAmount(customer_id,account_id);
+
+        double updatedAmount=savingsAmount-withdrawalAmount;
+
+        LogicalHandler.INSTANCE.transactionOfWithdrawORDeposit(customer_id, account_id,updatedAmount);
+    }
+
+
+    private static void deposit() throws LogicalException, AccountNotFoundException, PersistenceException {
+
+        long customer_id= checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
+
+        long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id,InputHandler.INSTANCE.getAccountId());
+
+        double depositAmount=validateDepositAmount(customer_id,account_id);
+
+        double savingsAmount=getSavingsAmount(customer_id,account_id);
+
+        double updatedAmount=savingsAmount+depositAmount;
+
+        LogicalHandler.INSTANCE.transactionOfWithdrawORDeposit(customer_id,account_id,updatedAmount);
+    }
+
+    private static void addNewCustomers()
+    {
+        ArrayList<Customer> customers = InputHandler.INSTANCE.getCustomersInfo();
+        ArrayList<Account> accounts = InputHandler.INSTANCE.getAccountsInfo(customers.size());
+        LogicalHandler.INSTANCE.handleNewCustomer(customers, accounts);
+    }
+
+    private  static void addNewAccount()
+    {
+        long customer_id = InputHandler.INSTANCE.getCustomerId();
+        double balance = InputHandler.INSTANCE.getBalance();
+        LogicalHandler.INSTANCE.addNewAccountForExistingCustomer(customer_id,balance);
+    }
+
+    private static void getAccountsInfo()
+    {
+        long customer_id = InputHandler.INSTANCE.getCustomerId();
+        try {
+            HashMap<Long, Account> accountInfo = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
+            System.out.println(accountInfo);
+        } catch (AccountNotFoundException | LogicalException e) {
+            System.out.println("Customer_id:" + e.getMessage() + "customer_id not available in account table");
+        }
+    }
+
+    private static void deleteAccount() throws LogicalException, PersistenceException, AccountNotFoundException {
+        long customer_id =checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
+        long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id, InputHandler.INSTANCE.getAccountId());
+
+        LogicalHandler.INSTANCE.deleteAccount(customer_id, account_id);
+    }
+
+
 }
 
 

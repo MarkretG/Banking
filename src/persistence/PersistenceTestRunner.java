@@ -1,4 +1,4 @@
-package persistence;
+/*package persistence;
 import bankingManagement.Customer;
 
 import java.util.ArrayList;
@@ -9,13 +9,9 @@ public class PersistenceTestRunner {
         PersistenceDAOImpl persistenceDAO=new PersistenceDAOImpl();
         Scanner sc=new Scanner(System.in);
         System.out.println("1.add customers");
-        System.out.println("2.getCustomers");
-        System.out.println("3.getAllCustomers");
-        System.out.println("4.addAccount");
+        System.out.println("2.addAccount");
         System.out.println("5.addAccounts");
-        System.out.println("6.getAccounts");
         System.out.println("7.getAccount");
-        System.out.println("8.getAllAccounts");
         System.out.println("9.updateAccount");
         System.out.println("10.deleteAccount");
         while (true)
@@ -37,6 +33,12 @@ public class PersistenceTestRunner {
                     {
                         System.out.println(customer1);
                     }
+                case 2:
+                    System.out.println("add account");
+                   // long customer_id= sc.nextLong();
+                    //double balance=sc.nextDouble();
+                    long l = persistenceDAO.addAccount(76789543, 78675);
+                    System.out.println(l);
             }
 
             }
@@ -45,3 +47,6 @@ public class PersistenceTestRunner {
 
     }
 
+
+
+ */
