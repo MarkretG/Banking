@@ -1,68 +1,54 @@
 package inMemoryStorageHandling;
-
 import bankingManagement.Account;
 import bankingManagement.Customer;
-
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class InMemoryStorageDAOImpl implements InMemoryStorageDAO {
-    private HashMap<Long,String> customerHashMap=new HashMap<>();
-    private HashMap<Long,HashMap<Long,Account>> accountInfoHashMap=new HashMap<>();
+    private Map<Long,String> customersMap=new HashMap<>();
+    private Map<Long,Map<Long,Account>> accountsInfoMap=new HashMap<>();
 
-    public void storeCustomersInCustomerHashMap(ArrayList<Customer> customers) {
+    public void storeCustomersInCustomerMap(List<Customer> customers) {
         if (customers.isEmpty())
         {
             System.out.println("Store customer in customer hashmap:"+"customers list is empty");
         }
         for (Customer customer:customers)
         {
-            customerHashMap.put(customer.getCustomer_id(),customer.getName());
+            customersMap.put(customer.getCustomer_id(),customer.getName());
         }
     }
 
     @Override
-    public void storeAccountsInAccountHashMap(ArrayList<Account> accounts) {
+    public void storeAccountsInAccountMap(List<Account> accounts) {
         if (accounts.isEmpty())
         {
             System.out.println("store account in account hashmap:"+"accounts list is empty");
         }
         for (Account account:accounts)
         {
-            HashMap<Long,Account> accountHashMap = accountInfoHashMap.getOrDefault(account.getCustomer_id(), new HashMap<>());
-            accountHashMap.put(account.getAccount_id(), account);
-            accountInfoHashMap.put(account.getCustomer_id(), accountHashMap);
+            Map<Long,Account> accountMap = accountsInfoMap.getOrDefault(account.getCustomer_id(), new HashMap<>());
+            accountMap.put(account.getAccount_id(), account);
+            accountsInfoMap.put(account.getCustomer_id(), accountMap);
         }
 
     }
     @Override
-    public void storeAccountInAccountHashMap(Account account) {
-        HashMap<Long,Account> accountHashMap = accountInfoHashMap.getOrDefault(account.getCustomer_id(), new HashMap<>());
-        accountHashMap.put(account.getAccount_id(), account);
+    public void storeAccountInAccountMap(Account account) {
+        Map<Long,Account> accountMap = accountsInfoMap.getOrDefault(account.getCustomer_id(), new HashMap<>());
+        accountMap.put(account.getAccount_id(), account);
 
-        accountInfoHashMap.put(account.getCustomer_id(), accountHashMap);
-    }
-    @Override
-    public HashMap<Long, Account> getAccountsInfo(long customer_id)throws AccountNotFoundException{
-        if (customer_id<=0)
-        {
-            System.out.println("get accountsInfo:"+"customer id is zero");
-        }
-        HashMap<Long,Account> account=accountInfoHashMap.get(customer_id);
-        if (account==null)
-        {
-            throw new AccountNotFoundException(customer_id);
-        }
-      return account;
+        accountsInfoMap.put(account.getCustomer_id(), accountMap);
     }
 
     @Override
-    public HashMap<Long, String> getCustomerHashMap() {
-        return customerHashMap;
+    public Map<Long, String> getCustomersMap() {
+        return customersMap;
     }
 
     @Override
-    public HashMap<Long, HashMap<Long, Account>> getAccountHashMap() {
-        return accountInfoHashMap;
+    public Map<Long, Map<Long, Account>> getAccountsMap() {
+        return accountsInfoMap;
     }
 }

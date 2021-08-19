@@ -1,17 +1,14 @@
 package ioHandler;
 import bankingManagement.Account;
 import bankingManagement.Customer;
-import inMemoryStorageHandling.AccountNotFoundException;
 import logicalLayer.Controller;
 import logicalLayer.LogicalException;
 import logicalLayer.LogicalHandler;
 import persistence.PersistenceException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 public class  BankingManagementSystem {
-    public static void main(String[] args) throws LogicalException, PersistenceException, AccountNotFoundException {
+    public static void main(String[] args) throws LogicalException, PersistenceException{
         //LogicalHandler.INSTANCE.LogicalHandler();
         while (true)
         {
@@ -46,10 +43,10 @@ public class  BankingManagementSystem {
         }
     }
 
-    private static double validateWithdrawAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
+    private static double validateWithdrawAmount(long customerId,long account_id) throws LogicalException{
         System.out.println("enter withdraw amount");
         double withdrawalAmount= InputHandler.INSTANCE.getBalance();
-        HashMap<Long,Account> accountHashMap= Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
+        Map<Long,Account> accountHashMap= LogicalHandler.INSTANCE.getAccountsInfo(customerId);
             for (Map.Entry<Long, Account> entry : accountHashMap.entrySet()) {
                 if (entry.getKey() == account_id) {
                     System.out.println("savings amount:"+entry.getValue().getBalance());
@@ -65,11 +62,11 @@ public class  BankingManagementSystem {
       }
 
 
-    private static double validateDepositAmount(long customerId,long account_id) throws LogicalException, AccountNotFoundException {
+    private static double validateDepositAmount(long customerId,long account_id) throws LogicalException {
         InputHandler inputHandler = InputHandler.INSTANCE;
         System.out.println("enter deposit amount");
         double depositAmount = inputHandler.getBalance();
-        HashMap<Long, Account> accountHashMap = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customerId);
+        Map<Long, Account> accountHashMap = LogicalHandler.INSTANCE.getAccountsInfo(customerId);
             for (Map.Entry<Long, Account> entry : accountHashMap.entrySet()) {
                 if (entry.getKey() == account_id) {
                     System.out.println("savings amount:"+entry.getValue().getBalance());
@@ -85,7 +82,7 @@ public class  BankingManagementSystem {
     }
 
     private static long  checkCustomerIdInAccountHashMap(long customer_id) throws LogicalException {
-        HashMap<Long,HashMap<Long,Account>> account=Controller.getInMemoryStorageDAOHandler().getAccountHashMap();
+        Map<Long,Map<Long,Account>> account=Controller.getInMemoryStorageDAOHandler().getAccountsMap();
         if (account.containsKey(customer_id)) {
             return customer_id;
         }
@@ -96,22 +93,22 @@ public class  BankingManagementSystem {
         return customer_id;
     }
 
-    public static long checkAccountIdIsMatchGivenCustomerId(long customer_id,long account_id) throws LogicalException, AccountNotFoundException {
-        HashMap<Long,Account> accountHashMap=Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
-        if (accountHashMap.containsKey(account_id)) {
+    public static long checkAccountIdIsMatchGivenCustomerId(long customer_id,long account_id) throws LogicalException{
+        Map<Long,Account> accountMap=LogicalHandler.INSTANCE.getAccountsInfo(customer_id);
+        if (accountMap.containsKey(account_id)) {
             return account_id;
         }
 
-        while (!accountHashMap.containsKey(account_id)) {
+        while (!accountMap.containsKey(account_id)) {
             System.out.println("enter account id  is mismatch for given customer_id");
             account_id = InputHandler.INSTANCE.getAccountId();
         }
         return account_id;
     }
 
-    private   static  double getSavingsAmount(long customer_id,long account_id) throws LogicalException, AccountNotFoundException {
-        HashMap<Long, Account> accountHashMap = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
-        for (Map.Entry<Long, Account> entry : accountHashMap.entrySet()) {
+    private   static  double getSavingsAmount(long customer_id,long account_id) throws LogicalException{
+        Map<Long, Account> accountMap = LogicalHandler.INSTANCE.getAccountsInfo(customer_id);
+        for (Map.Entry<Long, Account> entry : accountMap.entrySet()) {
             if (entry.getKey() == account_id) {
                 return entry.getValue().getBalance();
             }
@@ -119,7 +116,7 @@ public class  BankingManagementSystem {
         return 0;
     }
 
-    private static void withDraw() throws LogicalException, AccountNotFoundException, PersistenceException {
+    private static void withDraw() throws LogicalException,PersistenceException {
         long customer_id = checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
 
         long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id,InputHandler.INSTANCE.getAccountId());
@@ -134,7 +131,7 @@ public class  BankingManagementSystem {
     }
 
 
-    private static void deposit() throws LogicalException, AccountNotFoundException, PersistenceException {
+    private static void deposit() throws LogicalException, PersistenceException {
 
         long customer_id= checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
 
@@ -152,7 +149,7 @@ public class  BankingManagementSystem {
     private static void addNewCustomers()
     {
         List<Customer> customers = InputHandler.INSTANCE.getCustomersInfo();
-        ArrayList<Account> accounts = InputHandler.INSTANCE.getAccountsInfo(customers.size());
+        List<Account> accounts = InputHandler.INSTANCE.getAccountsInfo(customers.size());
         LogicalHandler.INSTANCE.handleNewCustomer(customers, accounts);
     }
 
@@ -167,14 +164,14 @@ public class  BankingManagementSystem {
     {
         long customer_id = InputHandler.INSTANCE.getCustomerId();
         try {
-            HashMap<Long, Account> accountInfo = Controller.getInMemoryStorageDAOHandler().getAccountsInfo(customer_id);
+            Map<Long, Account> accountInfo = LogicalHandler.INSTANCE.getAccountsInfo(customer_id);
             System.out.println(accountInfo);
-        } catch (AccountNotFoundException | LogicalException e) {
-            System.out.println("Customer_id:" + e.getMessage() + "customer_id not available in account table");
+        } catch (LogicalException e) {
+            System.out.println("Customer_id:" + e.getCause()+ "customer_id not available in account table");
         }
     }
 
-    private static void deleteAccount() throws LogicalException, PersistenceException, AccountNotFoundException {
+    private static void deleteAccount() throws LogicalException, PersistenceException{
         long customer_id =checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
         long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id, InputHandler.INSTANCE.getAccountId());
 

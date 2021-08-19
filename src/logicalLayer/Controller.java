@@ -21,13 +21,12 @@ public class Controller {
         if (!properties.isEmpty()) {
             return properties;
         }
-
-        String path = System.getProperty("user.dir") + File.separator + "src" + File.separator;
+        String path = System.getProperty("user.dir") + File.separator;
         try (FileReader reader = new FileReader(path + "controller.properties")) {
             properties.load(reader);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            throw new LogicalException("file not found please check your file path",e, ERROR_CODE_FILE);
+            throw new LogicalException("File not found please check your file path",e, ERROR_CODE_FILE);
         } catch (IOException i) {
             i.printStackTrace();
             throw new LogicalException("you are try to read file that does not exist",i, ERROR_CODE_FILE);

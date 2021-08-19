@@ -3,7 +3,7 @@ import bankingManagement.Account;
 import bankingManagement.Customer;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 public class PersistenceDAOImpl implements PersistenceDAO {
     private final int Error_CODE_INSERT_QUERY = 402;
@@ -15,7 +15,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
 
 
     @Override
-    public ArrayList<Long> addCustomers(ArrayList<Customer> customers) throws PersistenceException {
+    public List<Long> addCustomers(List<Customer> customers) throws PersistenceException {
         if (customers==null||customers.isEmpty())
         {
             throw new PersistenceException("add customers list is empty or null",ERROR_CODE_EMPTY_LIST);
@@ -38,7 +38,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     }
 
     @Override
-    public ArrayList<Customer> getCustomers(ArrayList<Long> customer_ids) throws PersistenceException {
+    public List<Customer> getCustomers(List<Long> customer_ids) throws PersistenceException {
         if (customer_ids==null||customer_ids.isEmpty())
         {
             throw new PersistenceException("customers_id list is empty or null",ERROR_CODE_EMPTY_LIST);
@@ -60,8 +60,8 @@ public class PersistenceDAOImpl implements PersistenceDAO {
 
 
     @Override
-    public ArrayList<Customer> getAllCustomers() throws PersistenceException {
-        ArrayList<Customer> customersList=new ArrayList<>();
+    public List<Customer> getAllCustomers() throws PersistenceException {
+        List<Customer> customersList=new ArrayList<>();
         Connection connection = DBUtil.getConnection();
         String query = "select customer_id,name from customer_info";
         try (Statement statement = connection.createStatement();
@@ -105,7 +105,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     }
 
     @Override
-    public ArrayList<Long> addAccounts(HashMap<Long, Account> accounts) throws PersistenceException {
+    public List<Long> addAccounts(Map<Long, Account> accounts) throws PersistenceException {
         if (accounts==null||accounts.isEmpty())
         {
             throw new PersistenceException("add accounts list is empty or null",ERROR_CODE_EMPTY_LIST);
@@ -129,7 +129,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     }
 
     @Override
-    public ArrayList<Account> getAccounts(ArrayList<Long> account_ids) throws PersistenceException {
+    public List<Account> getAccounts(List<Long> account_ids) throws PersistenceException {
         if (account_ids==null||account_ids.isEmpty())
         {
             throw new PersistenceException("accounts_id  list is empty or null",ERROR_CODE_EMPTY_LIST);
@@ -175,8 +175,8 @@ public class PersistenceDAOImpl implements PersistenceDAO {
 
 
     @Override
-    public ArrayList<Account> getAllAccounts() throws PersistenceException {
-        ArrayList<Account> accountList=new ArrayList<>();
+    public List<Account> getAllAccounts() throws PersistenceException {
+        List<Account> accountList=new ArrayList<>();
         Connection connection = DBUtil.getConnection();
         String query="select customer_id,account_id,balance from  account_info where active=1";
         try (Statement statement = connection.createStatement();
@@ -255,8 +255,8 @@ public class PersistenceDAOImpl implements PersistenceDAO {
             e.printStackTrace();
         }
     }
-    private ArrayList<Long> getListOfGeneratedIdsFromResultSet(PreparedStatement preparedStatement) throws PersistenceException {
-        ArrayList<Long> customerIdList=new ArrayList<>();
+    private List<Long> getListOfGeneratedIdsFromResultSet(PreparedStatement preparedStatement) throws PersistenceException {
+            List<Long> customerIdList=new ArrayList<>();
 
             try(ResultSet resultSet=preparedStatement.getGeneratedKeys()){
             while (resultSet.next()) {
@@ -270,8 +270,8 @@ public class PersistenceDAOImpl implements PersistenceDAO {
         return customerIdList;
     }
 
-    private ArrayList<Customer> getListOfCustomersFromResultSet(PreparedStatement preparedStatement) throws PersistenceException {
-        ArrayList<Customer> customersList=new ArrayList<>();
+    private List<Customer> getListOfCustomersFromResultSet(PreparedStatement preparedStatement) throws PersistenceException {
+        List<Customer> customersList=new ArrayList<>();
         try(ResultSet resultSet = preparedStatement.executeQuery()) {
             while (resultSet.next()) {
                 Customer customer = new Customer();
@@ -287,8 +287,8 @@ public class PersistenceDAOImpl implements PersistenceDAO {
         }
     }
 
-    private ArrayList<Account> getListOfAccountsFromResultSet(PreparedStatement preparedStatement) throws PersistenceException {
-        ArrayList<Account> accountsList=new ArrayList<>();
+    private List<Account> getListOfAccountsFromResultSet(PreparedStatement preparedStatement) throws PersistenceException {
+        List<Account> accountsList=new ArrayList<>();
         try( ResultSet resultSet = preparedStatement.executeQuery()){
             while (resultSet.next()) {
                 Account account = new Account();

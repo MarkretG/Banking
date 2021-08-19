@@ -30,8 +30,8 @@ public enum InputHandler {
         return customers;
 
     }
-    public ArrayList<Account> getAccountsInfo(int accountsCounts) {
-        ArrayList<Account> accounts=new ArrayList<>();
+    public List<Account> getAccountsInfo(int accountsCounts) {
+           List<Account> accounts=new ArrayList<>();
         for (int i=0;i<accountsCounts;i++) {
             System.out.println("enter balance");
             double balance = getBalance();
