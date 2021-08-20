@@ -151,7 +151,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     public Account getAccount(long customer_id) throws PersistenceException {
         if(customer_id<=0)
         {
-            throw new PersistenceException("customer id is zero or less than zero",ERROR_CODE);
+            throw new PersistenceException("Customer id is zero or less than zero",ERROR_CODE);
         }
         Account account = new Account();
         Connection connection = DBUtil.getConnection();
@@ -200,7 +200,7 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     public void updateAccount(long account_id,double balance) throws PersistenceException {
         if (account_id<=0||balance<=0.0)
         {
-            throw new PersistenceException("account id and balance not less than zero",ERROR_CODE);
+            throw new PersistenceException("Account id and balance not less than zero",ERROR_CODE);
         }
         Connection connection = DBUtil.getConnection();
         String query = "update account_info set balance=? where  account_id=?";
@@ -217,10 +217,10 @@ public class PersistenceDAOImpl implements PersistenceDAO {
     }
 
     @Override
-    public void deleteAccount(long account_id) throws PersistenceException{
+    public void removeAccount(long account_id) throws PersistenceException{
         if (account_id<=0)
         {
-            throw new PersistenceException("account id is never less than zero",ERROR_CODE);
+            throw new PersistenceException("Account id is never less than zero",ERROR_CODE);
         }
         Connection connection = DBUtil.getConnection();
         String query = "update account_info set active=0 where account_id=?";
@@ -234,7 +234,47 @@ public class PersistenceDAOImpl implements PersistenceDAO {
         }
 
     }
-    public void handleBatchUpdateException(PreparedStatement preparedStatement) throws SQLException {
+
+    @Override
+    public void deactivateCustomer(long customer_id) throws PersistenceException {
+
+        if (customer_id<=0)
+        {
+            throw new PersistenceException("Customer id is never less than zero",ERROR_CODE);
+        }
+        Connection connection = DBUtil.getConnection();
+        String query = "update customer_info set active=0 where customer_id=?";
+        try( PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1,customer_id);
+            int count=preparedStatement.executeUpdate();
+            System.out.println(count+" "+"row(s) affected");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new PersistenceException("Exception occur in update query for update account",e, Error_CODE_UPDATE_QUERY);
+        }
+
+    }
+
+    @Override
+    public void activateCustomer(long customer_id) throws PersistenceException {
+        if (customer_id<=0)
+        {
+            throw new PersistenceException("Customer id is never less than zero",ERROR_CODE);
+        }
+        Connection connection = DBUtil.getConnection();
+        String query = "update customer_info set active=1 where customer_id=?";
+        try( PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+            preparedStatement.setLong(1,customer_id);
+            int count=preparedStatement.executeUpdate();
+            System.out.println(count+" "+"row(s) affected");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new PersistenceException("Exception occur in update query for update account",e, Error_CODE_UPDATE_QUERY);
+        }
+
+    }
+
+    private void handleBatchUpdateException(PreparedStatement preparedStatement) throws SQLException {
         try {
             preparedStatement.executeBatch();
         }

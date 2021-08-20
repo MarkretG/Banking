@@ -75,6 +75,8 @@ public enum LogicalHandler {
             //add new account for existing customer
              long account_id=Controller.getPersistenceDAOHandler().addAccount(customer_id, balance);
 
+             Controller.getPersistenceDAOHandler().activateCustomer(customer_id);
+
              Account account=getAccountObject(customer_id,account_id,balance);
 
             //store in account hashMap
@@ -132,7 +134,7 @@ public enum LogicalHandler {
     public Map<Long, Account> getAccountsInfo(long customer_id) throws LogicalException {
         Map<Long,Map<Long,Account>> accountMap=Controller.getInMemoryStorageDAOHandler().getAccountsMap();
         Map<Long,Account>  accountInfoMap=accountMap.get(customer_id);
-        if (accountInfoMap==null)
+        if (accountInfoMap==null||accountInfoMap.isEmpty())
         {
             throw  new LogicalException("Account not found for given customer id",100);
         }
@@ -142,15 +144,21 @@ public enum LogicalHandler {
     public void deleteAccount(long customerId,long accountId) throws LogicalException, PersistenceException {
         if (customerId<=0||accountId<=0)
         {
-            System.out.println("delete account:"+"account id or customer id is zero");
+            System.out.println("Delete account:"+"account id or customer id is zero");
         }
-        Controller.getPersistenceDAOHandler().deleteAccount(accountId);
-       Map<Long,Account> accountHashMap=getAccountsInfo(customerId);
-       for (Map.Entry<Long,Account> entry: accountHashMap.entrySet())
+
+        Controller.getPersistenceDAOHandler().removeAccount(accountId);
+        Map<Long,Account> accountMap=getAccountsInfo(customerId);
+        if(accountMap.size()==1)
+        {
+            Controller.getPersistenceDAOHandler().deactivateCustomer(customerId);
+        }
+       for (Map.Entry<Long,Account> entry: accountMap.entrySet())
        {
+
            if(entry.getKey()==accountId)
            {
-               accountHashMap.remove(entry.getKey(),entry.getValue());
+               accountMap.remove(entry.getKey(),entry.getValue());
                break;
            }
        }

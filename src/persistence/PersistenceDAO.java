@@ -25,7 +25,11 @@ public interface PersistenceDAO{
 
     void updateAccount(long account_id ,double balance) throws PersistenceException;
 
-    void deleteAccount(long account_id) throws  PersistenceException;
+    void removeAccount(long account_id) throws  PersistenceException;
+
+    void deactivateCustomer(long customer_id) throws PersistenceException;
+
+    void activateCustomer(long customer_id) throws PersistenceException;
 
     void cleanUp();
 }

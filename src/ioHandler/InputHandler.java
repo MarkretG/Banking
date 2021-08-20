@@ -33,7 +33,7 @@ public enum InputHandler {
     public List<Account> getAccountsInfo(int accountsCounts) {
            List<Account> accounts=new ArrayList<>();
         for (int i=0;i<accountsCounts;i++) {
-            System.out.println("enter balance");
+            System.out.println("Enter balance");
             double balance = getBalance();
             Account account = LogicalHandler.INSTANCE.getAccountObject(balance);
             accounts.add(account);
@@ -46,24 +46,24 @@ public enum InputHandler {
     }
 
     public long getCustomerId() {
-        System.out.println("enter customer_id");
+        System.out.println("Enter customer_id");
         customer_id=scanner.nextLong();
         while (customer_id<=0)
         {
-            System.out.println("invalid customer_id");
-            System.out.println("please enter customer_id");
+            System.out.println("Invalid customer_id");
+            System.out.println("Please enter customer_id");
             customer_id=scanner.nextLong();
         }
         return customer_id;
     }
 
     public long getAccountId() {
-        System.out.println("enter account_id");
+        System.out.println("Enter account_id");
         account_id=scanner.nextLong();
         while (account_id<=0)
         {
-            System.out.println("invalid account_id");
-            System.out.println("please enter account_id");
+            System.out.println("Invalid account_id");
+            System.out.println("Please enter account_id");
             account_id=scanner.nextLong();
         }
         return account_id;
@@ -78,8 +78,8 @@ public enum InputHandler {
         balance=scanner.nextDouble();
         while (balance<=0)
         {
-            System.out.println("balance should be positive");
-            System.out.println("enter balance");
+            System.out.println("Balance should be positive");
+            System.out.println("Enter balance");
             balance=scanner.nextDouble();
         }
         return balance;
@@ -88,10 +88,10 @@ public enum InputHandler {
         scanner.close();
     }
     private int validateAge() {
-        System.out.println("enter age");
+        System.out.println("Enter age");
         int age=scanner.nextInt();
         while ((age > 200) || (age < 5)) {
-            System.out.println("ERROR Please enter a valid age");
+            System.out.println("Please enter a valid age");
             System.out.println("What is your age?\n");
             age = scanner.nextInt();
         }
@@ -99,25 +99,25 @@ public enum InputHandler {
     }
     private String validateName()
     {
-        System.out.println("enter name");
+        System.out.println("Enter name");
         scanner.nextLine();
         String name=scanner.nextLine();
         while (name==null)
         {
-            System.out.println("name is null");
-            System.out.println("enter name");
+            System.out.println("Name is null");
+            System.out.println("Enter name");
             name=scanner.nextLine();
         }
         return name;
     }
     private long validatePhone()
     {
-        System.out.println("enter phone number");
+        System.out.println("Enter phone number");
         long phone=scanner.nextLong();
         while (phone<=0)
         {
-            System.out.println("invalid phone number");
-            System.out.println("please enter phone number");
+            System.out.println("Invalid phone number");
+            System.out.println("Please enter phone number");
             phone= scanner.nextLong();
         }
         return phone;

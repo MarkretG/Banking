@@ -29,7 +29,7 @@ public class Controller {
             throw new LogicalException("File not found please check your file path",e, ERROR_CODE_FILE);
         } catch (IOException i) {
             i.printStackTrace();
-            throw new LogicalException("you are try to read file that does not exist",i, ERROR_CODE_FILE);
+            throw new LogicalException("you are trying to read file that file does not exist",i, ERROR_CODE_FILE);
         }
         return properties;
     }
@@ -55,7 +55,7 @@ public class Controller {
             return inMemoryStorageDAO;
         }
         try {
-            String className = (String) getProperties().get("inMemoryStorageDAO");
+            String className = getProperties().getProperty("inMemoryStorageDAO");
             nullCheck(className);
             inMemoryStorageDAO = (InMemoryStorageDAO) Class.forName(className).newInstance();
         } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
@@ -68,7 +68,7 @@ public class Controller {
      private static void nullCheck(String className) throws LogicalException {
         if(className==null)
         {
-            throw new LogicalException("class name pointing to null",ERROR_CODE_CLASS);
+            throw new LogicalException("Class name pointing to null",ERROR_CODE_CLASS);
         }
     }
 }

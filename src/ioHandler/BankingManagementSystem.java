@@ -81,7 +81,7 @@ public class  BankingManagementSystem {
         return depositAmount;
     }
 
-    private static long  checkCustomerIdInAccountHashMap(long customer_id) throws LogicalException {
+    private static long  checkCustomerIdInAccountMap(long customer_id) throws LogicalException {
         Map<Long,Map<Long,Account>> account=Controller.getInMemoryStorageDAOHandler().getAccountsMap();
         if (account.containsKey(customer_id)) {
             return customer_id;
@@ -117,7 +117,7 @@ public class  BankingManagementSystem {
     }
 
     private static void withDraw() throws LogicalException,PersistenceException {
-        long customer_id = checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
+        long customer_id = checkCustomerIdInAccountMap(InputHandler.INSTANCE.getCustomerId());
 
         long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id,InputHandler.INSTANCE.getAccountId());
 
@@ -133,7 +133,7 @@ public class  BankingManagementSystem {
 
     private static void deposit() throws LogicalException, PersistenceException {
 
-        long customer_id= checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
+        long customer_id= checkCustomerIdInAccountMap(InputHandler.INSTANCE.getCustomerId());
 
         long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id,InputHandler.INSTANCE.getAccountId());
 
@@ -156,6 +156,7 @@ public class  BankingManagementSystem {
     private  static void addNewAccount()
     {
         long customer_id = InputHandler.INSTANCE.getCustomerId();
+        System.out.println("enter balance");
         double balance = InputHandler.INSTANCE.getBalance();
         LogicalHandler.INSTANCE.addNewAccountForExistingCustomer(customer_id,balance);
     }
@@ -172,7 +173,7 @@ public class  BankingManagementSystem {
     }
 
     private static void deleteAccount() throws LogicalException, PersistenceException{
-        long customer_id =checkCustomerIdInAccountHashMap(InputHandler.INSTANCE.getCustomerId());
+        long customer_id =checkCustomerIdInAccountMap(InputHandler.INSTANCE.getCustomerId());
         long account_id = checkAccountIdIsMatchGivenCustomerId(customer_id, InputHandler.INSTANCE.getAccountId());
 
         LogicalHandler.INSTANCE.deleteAccount(customer_id, account_id);
